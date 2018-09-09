@@ -23,18 +23,41 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UISwipeGestureRecognizer *vertical = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(reportVerticalSwipe:)];
-    vertical.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:vertical];
     
-    UISwipeGestureRecognizer *horizontal = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(reportHorizontalSwipe:)];
-    horizontal.direction = UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionRight;
-    [self.view addGestureRecognizer:horizontal];
+    for (NSUInteger touchCount = 1; touchCount <= 5; touchCount++) {
+        UISwipeGestureRecognizer *vertical = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(reportVerticalSwipe:)];
+        vertical.direction = UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
+        vertical.numberOfTouchesRequired = touchCount;
+        [self.view addGestureRecognizer:vertical];
+        
+        UISwipeGestureRecognizer *horizontal = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(reportHorizontalSwipe:)];
+        horizontal.direction = UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionRight;
+        horizontal.numberOfTouchesRequired = touchCount;
+        [self.view addGestureRecognizer:horizontal];
+    }
 }
 
 - (void)eraseText
 {
     self.label.text = @"";
+}
+
+- (NSString *)descriptionForTouchCount:(NSUInteger)touchCount
+{
+    switch (touchCount) {
+        case 1:
+            return @"Single ";
+        case 2:
+            return @"Double ";
+        case 3:
+            return @"Triple ";
+        case 4:
+            return @"Quadruple ";
+        case 5:
+            return @"Quintuple ";
+        default:
+            return @"";
+    }
 }
 
 #pragma mark Touch Handling
@@ -68,13 +91,13 @@
 
 - (void)reportHorizontalSwipe:(UIGestureRecognizer *)recognizer
 {
-    self.label.text = @"Horizontal swipe detected";
+    self.label.text = [NSString stringWithFormat:@"%@Horizontal swipe detected", [self descriptionForTouchCount:[recognizer numberOfTouches]]];
     [self performSelector:@selector(eraseText) withObject:nil afterDelay:2];
 }
 
 - (void)reportVerticalSwipe:(UIGestureRecognizer *)recognizer
 {
-    self.label.text = @"Vertical swipe detected";
+    self.label.text = [NSString stringWithFormat:@"%@Vertical swipe detected", [self descriptionForTouchCount:[recognizer numberOfTouches]]];
     [self performSelector:@selector(eraseText) withObject:nil afterDelay:2];
 }
 
